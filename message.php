@@ -3,7 +3,14 @@ try {
     include("config.php");
     
     $_POST = json_decode(file_get_contents('php://input'), true);
-    
+
+    $passkey = $_POST ["passkey"] ;	
+
+    if(strcmp($passkey,$SERVER_PASS_KEY)!=0) {
+        echo "Wrong passkey";
+        die("Wrong passkey");
+    }
+
     $owner = $_POST ["owner"] ;	
     $device_id = $_POST ["device_id"] ;
     $message = $_POST ["message"] ;
