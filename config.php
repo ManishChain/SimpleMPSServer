@@ -13,4 +13,11 @@ $connection = mysqli_connect($SETTINGS["hostname"], $SETTINGS["mysql_user"], $SE
 
 $SERVER_PASS_KEY = 'r1mr1m@2024#MPS';
 
+$response_success = array(
+  'status' => 'success'
+);
+$response_error = array(
+  'status' => 'fail'
+);
+
 ?>
