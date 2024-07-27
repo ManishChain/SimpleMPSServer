@@ -11,7 +11,7 @@ $SETTINGS["mysql_database"] = 'myperzem_simplemps';
 
 $connection = mysqli_connect($SETTINGS["hostname"], $SETTINGS["mysql_user"], $SETTINGS["mysql_pass"], $SETTINGS["mysql_database"]) or die ('Unable to connect to MySQL server.<br ><br >Please make sure your MySQL login details are correct.');
 
-$SERVER_PASS_KEY = 'r1mr1m@2024#MPS';
+$SERVER_PASS_KEY = 'r1mr1m@2024$MPS';
 
 $response_success = array(
   'status' => 'success'
