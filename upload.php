@@ -32,7 +32,7 @@ try {
   // die("Error ".$e);
   $response_error['error'] = $e;
 } finally {
-    $connection->close();
+    // $connection->close();
 }  
 echo json_encode($response_error);
 ?>
