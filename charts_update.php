@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <title>SimpleMPS Charts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link href="assets/css/tabulator.min.css" rel="stylesheet">
+    <link href="assets/css/my.css" rel="stylesheet">
+    <script type="text/javascript" src="assets/js/tabulator.min.js"></script>
+
+    <!-- STYLE CSS -->
+    <style type="text/css">
+        .linechart {
+            position: relative; z-index: 0; height: 300px; width: 500px;
+            font: normal 13px "PT Sans", Arial; line-height: 17px;
+        }
+        .linechart > canvas {
+            border: 1px solid #151515;
+        }
+        .linechart > div {
+            display: none; 
+            position: absolute; z-index: 1; left: 0; top: 0; 
+            font-size: 12px; line-height: 16px; white-space: nowrap; color: black; 
+            padding: 10px; border: 1px solid #D5D5D5; background-color: white;
+            box-shadow: 0 5px 15px rgba(56,56,56,0.15); 
+        }
+    </style>
+
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- JQUERY EXTENSION -->
+    <script type="text/javascript" src="assets/js/linechart_2.js"></script>
+
+</head>
+<body>
+    <?php
+    function getSignal($arg_1, $arg_2) {
+        $var = "<div style=\"background: white;padding:5px;\">";
+        if ($arg_1==1) {
+            $var = $var."<font color=\"red\"><b>ALERT</b> at $arg_2</font>";
+        } else if ($arg_1==2) {
+            $var = $var."<font color=\"black\"><b>SPY START</b> at $arg_2</font>";
+        } else if ($arg_1==3) {
+            $var = $var."<font color=\"black\"><b>SPY STOP</b> at $arg_2</font>";
+        } else if ($arg_1==4) {
+            $var = $var."<font color=\"brown\"><b>BATTERY ISSUE</b> at $arg_2</font>";
+        } else if ($arg_1==5) {
+            $var = $var."<font color=\"green\"><b>UPDATE</b> at $arg_2</font>";
+        } else {
+            $var = $var."OTHER";
+        }
+        return $var."</div>";
+    }
+    ?>
+    
+    <?php
+        include("config.php");
+        $passkey = $SERVER_PASS_KEY;
+        if(isset($_POST['passkey'])) {
+            $passkey = $_POST ["passkey"] ;
+        }
+        //echo $passkey;
+        if(empty($passkey)) {
+            echo"Empty passkey ";
+    ?>
+            <form action="" id="form" method="post">
+                <input type="password" name="passkey" id="passkey" required> 
+                <input type="submit" value="Login">
+            </form>
+    <?php
+            return;
+        }
+        if(strcmp($passkey,$SERVER_PASS_KEY)!=0) {
+          echo"Wrong passkey : '$passkey' Please contact admin to resolve issue." ;
+          return;
+        };
+    ?>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 20px;">
+        <?php
+        $sqlDevice = "SELECT * FROM `DEVICE` ORDER BY ID";
+        $resultDevice = $connection->query($sqlDevice);
+        if ($resultDevice->num_rows > 0) {
+            $currentDeviceID = 0 ;
+            while ($rowDevice = $resultDevice->fetch_assoc()) {
+                $currentDeviceID = $rowDevice['ID'];
+                $sql = "SELECT ID, TYPE_SMS, TIMESTAMPDIFF(HOUR, ADDED_ON, now()) DIFF, DATE_FORMAT(ADDED_ON, '%m/%d/%Y %H:%i') ADDED_ON FROM `ADMIN_SMS` WHERE `DEVICE_ID` = ".$currentDeviceID." ORDER BY DIFF ASC LIMIT 50";
+                echo '<div>Device: '.$currentDeviceID;
+                //echo $sql;
+                echo "<script type=\"text/javascript\">$.linechart_2({ id: '".$currentDeviceID."', data: [ [  ";
+                $result = $connection->query($sql);
+                if ($result->num_rows > 0) {
+                    $count=0;
+                    while ($row = $result->fetch_assoc()) {
+                       echo "{ X:".$row['DIFF'].", Y: ".$row['TYPE_SMS'].", tip: '".getSignal($row['TYPE_SMS'],$row['ADDED_ON'])."' }, \n" ; $count++;
+                    }
+                } else { 
+                        echo "<h2>No logs found</h2>";
+                };
+                // echo "{ X:0, Y: 67, tip: 'tip 11' }, { X:1, Y: 57, tip: 'tip 12' } " ;
+                echo " ] ] }); </script>";
+                echo "</div>";
+            }
+        } else { 
+                echo "<h2>No devices found</h2>";
+        };
+        
+    ?>
+    </div>
+    
+</body>
+</html>

@@ -30,7 +30,7 @@
       return;
     };
     // download apk
-    $name= "SimpleMPS_4.apk";
+    $name= "SimpleMPS_ver_8.apk";
     $apkFile = "apk/".$name;
     header('Content-Description: File Transfer');
     header('Content-Type: application/force-download');
