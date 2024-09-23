@@ -32,23 +32,25 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- JQUERY EXTENSION -->
-    <script type="text/javascript" src="assets/js/linechart_2.js"></script>
+    <script type="text/javascript" src="assets/js/linechart_update.js"></script>
 
 </head>
 <body>
     <?php
     function getSignal($arg_1, $arg_2) {
         $var = "<div style=\"background: white;padding:5px;\">";
-        if ($arg_1==1) {
-            $var = $var."<font color=\"red\"><b>ALERT</b> at $arg_2</font>";
-        } else if ($arg_1==2) {
-            $var = $var."<font color=\"black\"><b>SPY START</b> at $arg_2</font>";
-        } else if ($arg_1==3) {
-            $var = $var."<font color=\"black\"><b>SPY STOP</b> at $arg_2</font>";
+        if ($arg_1==2) {
+                        $var = $var."<font color=\"green\"><b>UPDATE</b> at $arg_2</font>";
         } else if ($arg_1==4) {
-            $var = $var."<font color=\"brown\"><b>BATTERY ISSUE</b> at $arg_2</font>";
-        } else if ($arg_1==5) {
-            $var = $var."<font color=\"green\"><b>UPDATE</b> at $arg_2</font>";
+                        $var = $var."<font color=\"black\"><b>SPY START</b> at $arg_2</font>";
+        } else if ($arg_1==6) {
+                        $var = $var."<font color=\"black\"><b>SPY STOP</b> at $arg_2</font>";
+        } else if ($arg_1==8) {
+                        $var = $var."<font color=\"green\"><b>SPY</b> at $arg_2</font>";
+        } else if ($arg_1==10) {
+                        $var = $var."<font color=\"brown\"><b>BATTERY ISSUE</b> at $arg_2</font>";
+        } else if ($arg_1==15) {
+                        $var = $var."<font color=\"red\"><b>ALERT</b> at $arg_2</font>";
         } else {
             $var = $var."OTHER";
         }
@@ -79,7 +81,6 @@
         };
     ?>
     
-    <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 20px;">
         <?php
         $sqlDevice = "SELECT * FROM `DEVICE` ORDER BY ID";
         $resultDevice = $connection->query($sqlDevice);
@@ -88,7 +89,17 @@
             while ($rowDevice = $resultDevice->fetch_assoc()) {
                 $currentDeviceID = $rowDevice['ID'];
                 $sql = "SELECT ID, TYPE_SMS, TIMESTAMPDIFF(HOUR, ADDED_ON, now()) DIFF, DATE_FORMAT(ADDED_ON, '%m/%d/%Y %H:%i') ADDED_ON FROM `ADMIN_SMS` WHERE `DEVICE_ID` = ".$currentDeviceID." ORDER BY DIFF ASC LIMIT 50";
-                echo '<div>Device: '.$currentDeviceID;
+                echo "<br><br><div style='background:#dfdfdf;padding:1px; border:solid red 0px;'>";
+                echo displayLabel($rowDevice,'ID');
+                echo displayLabel($rowDevice,'NUMBER');
+                echo displayLabel($rowDevice,'ANDROID');
+                echo displayLabel($rowDevice,'HANDET_INFO');
+                echo displayLabel($rowDevice,'ADMIN');
+                echo displayLabel($rowDevice,'OWNER');
+                echo displayLabel($rowDevice,'OWNER_INFO');
+                //echo displayLabel($rowDevice,'DEVICE_STATUS');
+                //echo displayLabel($rowDevice,'LIVE');
+                echo "</div>";
                 //echo $sql;
                 echo "<script type=\"text/javascript\">$.linechart_2({ id: '".$currentDeviceID."', data: [ [  ";
                 $result = $connection->query($sql);
@@ -109,7 +120,8 @@
         };
         
     ?>
-    </div>
     
+<br><br><br>
+
 </body>
 </html>

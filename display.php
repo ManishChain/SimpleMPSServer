@@ -62,7 +62,8 @@
         if(!(empty($owner) && empty($device_id))) {
             $sql = "SELECT * FROM $smsType where `OWNER`='$owner' and `DEVICE_ID`='$device_id' ORDER BY id DESC";
         } else {
-            $sqlOwner = "SELECT DISTINCT OWNER, DEVICE_ID FROM $smsType ORDER BY DEVICE_ID DESC";
+            // $sqlOwner = "SELECT DISTINCT OWNER, DEVICE_ID FROM $smsType ORDER BY DEVICE_ID DESC";
+            $sqlOwner = "SELECT OWNER, MAX(DEVICE_ID) DEVICE_ID FROM ( SELECT MAX(ID), OWNER, DEVICE_ID FROM $smsType GROUP BY OWNER, DEVICE_ID ) T GROUP BY T.DEVICE_ID ORDER BY T.DEVICE_ID DESC" ;
             $resultOwner = $connection->query($sqlOwner);
         }
         $result = $connection->query($sql);
@@ -193,8 +194,8 @@
             tooltip:true,         //show tool tips on cells
         },
         columns:[                 //define the table columns
-            {title:"OWNER",     field:"OWNER",      width:100   },
-            {title:"ID",        field:"DEVICE_ID",  width:130   },
+            {title:"ID",        field:"ID",      width:100   },
+            {title:"DID",       field:"DEVICE_ID",  width:130   },
             {title:"S",         field:"SPY",        width:30, formatter:"tickCross" }, 
             {title:"T",         field:"TESTING",    width:30   },
             {title:"A",         field:"ACTIVE",     width:30   },

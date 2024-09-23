@@ -1,6 +1,6 @@
 <?php
     include("config.php");
-    $passkey = "";
+    $passkey = "" ;
     if(isset($_POST['passkey'])) {
         $passkey = $_POST ["passkey"] ;
     }
@@ -25,12 +25,12 @@
 <?php
         return;
     }
-    if(strcmp($passkey,$SERVER_PASS_KEY)!=0) {
+    if(strcmp($passkey,$DOWNLOAD_PASS_KEY)!=0) {
       echo"Wrong passkey : '$passkey' Please contact admin to resolve issue." ;
       return;
     };
     // download apk
-    $name= "SimpleMPS_ver_8.apk";
+    $name= "SimpleMPS_10_Sept.apk";
     $apkFile = "apk/".$name;
     header('Content-Description: File Transfer');
     header('Content-Type: application/force-download');

@@ -1,0 +1,5 @@
+<script type="text/javascript">$.linechart_2(
+    { id: '1', data: [ [  
+        { X:74, Y: 10, tip: '<div style="background: white;padding:5px;"><font color="black"><b>SPY STOP</b> at 08/28/2024 08:00</font></div>' }, 
+        { X:84, Y: 5, tip: '<div style="background: white;padding:5px;"><font color="black"><b>SPY START</b> at 08/27/2024 21:30</font></div>' }, 
+ ] ] }); </script>

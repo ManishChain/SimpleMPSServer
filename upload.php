@@ -16,7 +16,7 @@ try {
     $uploadOk = 0;
   }
   // Allow certain file formats
-  if($fileType != "txt" && $fileType != "log") {
+  if($fileType != "html" && $fileType != "txt" && $fileType != "log") {
     $response_error['error'] = "file not valid .txt or .log";
     $uploadOk = 0;
   }
